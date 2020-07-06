@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    	<script src="js/jquery-1.12.3.js"></script>
+        <script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts.min.js"></script>
+
+    <style>
+			* {margin: 0; padding: 0;}
+			ul {list-style: none;}
+
+			#box {
+				width: 400px;
+				height: 200px;
+				border: 5px solid rosybrown;
+				margin: 100px auto;
+				position: relative;
+				/*溢出隐藏*/
+				overflow: hidden;
+			}
+			#list1 {
+				width: 2000px;
+				position: absolute;
+				left: 0px;
+				top: 0;
+			}
+			#list1 li {
+				width: 400px;
+				height: 200px;
+				text-align: center;
+				line-height: 200px;
+				font-size: 50px;
+				float: left;
+			}
+			#list2 {
+				position: absolute;
+				bottom: 10px;
+				left: 40%;
+			}
+			#list2 li {
+				float: left;
+				margin-left: 5px;
+				width: 20px;
+				height: 20px;
+				background: white;
+				text-align: center;
+				line-height: 20px;
+				border-radius: 50%;
+				cursor: pointer;
+				font-size: 12px;
+			}
+			#list2 .active {
+				background: gray;
+				color: white;
+			}
+			.prev, .next {
+				position: absolute;
+				top: 40%;
+				background: white;
+				cursor: pointer;
+			}
+			.next {
+				right: 0;
+			}
+		</style>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>
+
+            <div id="box">
+			<ul id="list1">
+                <li><a href="#"><img src="image/1.jpg" alt=""/></a></li>
+                <li><a href="#"><img src="image/2.jpg" alt=""/></a></li>
+                <li><a href="#"><img src="image/3.jpg" alt=""/></a></li>
+                <li><a href="#"><img src="image/4.jpg" alt=""/></a></li>
+            </ul>
+
+			<ul id="list2">
+				<li class="active">1</li>
+				<li>2</li>
+				<li>3</li>
+				<li>4</li>
+			</ul>
+
+			<div class="prev"> < </div>
+			<div class="next"> > </div>
+		    </div>
+            </td>
+        </tr>
+    </table>
+    <br>
+
+    <div id="main" style="width: 1500px;height:400px;color: darkgray"></div>
+
+     <script type="text/javascript">
+        $(function(){
+
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('main'));
+
+            // 指定图表的配置项和数据
+            var option = {
+                title: {
+                    text: '曲线图数据展示',
+                    left: 'center'
+
+                },
+                tooltip: {},
+                xAxis: {
+                    type: 'category',
+                    data:[]
+                },
+                yAxis: {},
+                series: [{
+                    type: 'line',
+                    animation: false,
+                    data: []
+                }]
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+
+            $.ajax({
+                    url: "https://edu.telking.com/api/?type=month",
+                    type: 'get',
+                    // dataType: 'json',
+                    success:function(res){
+                        console.log(res['data']);
+
+                    option.series[0].data = res['data']['series'];
+                    option.xAxis.data = res['data']['xAxis'];
+                    myChart.setOption(option); // 根据数据重新显示图表
+                    }
+                });
+        })
+    </script>
+
+<table>
+    <tr>
+        <td>
+            <div id="pie" style="width: 600px;height:400px;"></div>
+        </td>
+        <script type="text/javascript">
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('pie'));
+
+            // 指定图表的配置项和数据
+            var option = {
+        title: {
+            text: '饼状图数据展示',
+            // subtext: '纯属虚构',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        },
+        series: [
+            {
+                name: '访问来源',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '60%'],
+                data: [
+                    {value: 335, name: 'Mon'},
+                    {value: 310, name: 'Tue'},
+                    {value: 234, name: 'Wed'},
+                    {value: 135, name: 'Thu'},
+                    {value: 1548, name: 'Fri'}
+                ],
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+
+    </script>
+
+        <td align="center">
+
+<div id="bar" style="width: 600px;height:400px;"></div>
+        </td>
+        <script type="text/javascript">
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('bar'));
+
+            // 指定图表的配置项和数据
+            var option = {
+                title: {
+                text: '柱状图数据展示',
+                left: 'center'
+                },
+                color: ['#3398DB'],
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        axisTick: {
+                            alignWithLabel: true
+                        }
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value'
+                    }
+                ],
+                series: [
+                    {
+                        name: '直接访问',
+                        type: 'bar',
+                        barWidth: '60%',
+                        data: [10, 52, 200, 334, 390, 330, 220]
+                    }
+                ]
+            };
+                    // 使用刚指定的配置项和数据显示图表。
+                    myChart.setOption(option);
+
+    </script>
+
+    </tr>
+</table>
+<script>
+
+		// 先复制第1个li，并添加到最后
+		$('#list1 li').first().clone(true).appendTo('#list1');
+
+		// 自动轮播
+		var n = 0;
+		var timer = setInterval(function(){
+			n++;
+			move()
+		}, 1000);
+
+		function move() {
+			// 控制右边界
+			if (n >= 5) {
+				$('#list1').css('left', 0);  // 瞬间非动画变化到第一张图（n=0）
+				n = 1  // n=1表示即将动画移动到第二张图(n=1)
+			}
+			// 控制左边界
+			if (n < 0) {
+				$('#list1').css('left', -4*400);
+				n = 3
+			}
+
+			// 动画
+			$('#list1').stop(true).animate({left: -n*400});
+
+			// 修改小按钮的选中状态
+			$('#list2 li').eq(n%4).addClass('active')
+						.siblings().removeClass('active')
+
+		}
+
+		// 移入box关闭定时器，移出开启
+		$('#box').hover(
+			function(){
+				clearInterval(timer)
+			},
+			function(){
+				clearInterval(timer);
+				timer = setInterval(function(){
+					n++;
+					move()
+				}, 2000)
+			}
+		);
+
+		// 给小按钮添加移入事件
+		$('#list2 li').mouseenter(function(){
+			n = $(this).index();
+			move()
+		});
+
+		// 下一页
+		$('.next').click(function(){
+			n++
+			move()
+		});
+
+		// 上一页
+		$('.prev').click(function(){
+			n--
+			move()
+		})
+	</script>
+</body>
+</html>
